@@ -1,2 +1,6 @@
-# fit-feast
-Source code for an Android app for capstone project.
+Group: 12
+
+Memeber List:
+    - Amogh Timsina
+
+App Name: FitFeast
