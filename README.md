@@ -1,6 +1,7 @@
 ## Group 12 ##
 
 - Amogh Timsina
+- Srenezaa Parasharamatam 
 
 ## FitFeast ##
 
