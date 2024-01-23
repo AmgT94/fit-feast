@@ -7,7 +7,7 @@
 
 This app is a comprehensive health tracker designed for daily use. Key features include personalized diet plans, live workout sessions, access to personal coaches and nutritionists, as well as calorie and sleep tracking. It also provides daily and weekly health reports to users.
 
-## Features (subject to change) ##
+## Features ##
 
 - Personalized Diet Plan
     - Customized dietary suggestions based on user preferences and health goals.
