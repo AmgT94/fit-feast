@@ -10,11 +10,13 @@ This app is a comprehensive health tracker designed for daily use. Key features 
 ## Features ##
 
 - Personalized Diet Plan
-    - Customized dietary suggestions based on user preferences and health goals.
-- Testimonials from Previous Users
-    - Displaying user experiences and success stories for motivation and credibility.
-- Online Appointments
-    - Scheduling feature for virtual consultations with health professionals.
+    - Customized dietary suggestions based on user preferences and health goals. 
+- ~~ Testimonials from Previous Users ~~
+    - ~~ Displaying user experiences and success stories for motivation and credibility. ~~
+- ~~ Online Appointments ~~ 
+    - ~~ Scheduling feature for virtual consultations with health professionals. ~~
+- Health Tips and Articles
+    - Sourced from reputable health and wellness websites
 - Daily and Weekly Health Reports 
     - Offering insights and summaries of health progress over time.
 - Search Functionality
