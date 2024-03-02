@@ -1,146 +1,64 @@
 package com.example.fitfeast
 
-import android.app.Dialog
 import android.os.Bundle
-import android.view.WindowManager
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.Spinner
-import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.fitfeast.databinding.ActivityMainBinding
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.google.android.material.tabs.TabLayout
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var healthEntryManager: HealthEntryManager
-    // Declare personalizedDietPlan here
-    private lateinit var personalizedDietPlan: PersonalizedDietPlan
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize HealthEntryManager
-        healthEntryManager = HealthEntryManager()
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        // Initialize PersonalizedDietPlan
-        personalizedDietPlan = PersonalizedDietPlan("user123")
+        // Listen for navigation changes
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.dashboardFragment -> {
+                    // Hide TabLayout when on the Dashboard
+                    binding.tabLayout.visibility = View.GONE
+                }
+                else -> {
+                    // Show TabLayout when not on the Dashboard
+                    binding.tabLayout.visibility = View.VISIBLE
+                }
+            }
+        }
 
-        // Setup RecyclerView and buttons
-        initializeRecyclerView()
-        setupButtons()
+        setupTabLayout()
     }
 
-    private fun initializeRecyclerView() {
-        val entries = healthEntryManager.getEntries().toMutableList()
-        val entriesAdapter = EntriesAdapter(entries)
-        with(binding.entriesRecyclerView) {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = entriesAdapter
-        }
-    }
+    private fun setupTabLayout() {
+        // Assuming you have two tabs: Sign In and Sign Up
+        val tabTitles = arrayOf("Sign In", "Sign Up")
 
-    private fun setupButtons() {
-        binding.dietPlanButton.setOnClickListener {
-            showAddDietPlanDialog()
+        // Since we're not using ViewPager, we manually set up TabLayout with NavController
+        binding.tabLayout.apply {
+            addTab(newTab().setText(tabTitles[0]))
+            addTab(newTab().setText(tabTitles[1]))
         }
 
-        binding.dailyReportButton.setOnClickListener {
-            showToast("Daily report generated")
-        }
-
-        binding.weeklyReportButton.setOnClickListener {
-            showToast("Weekly report generated")
-        }
-
-        binding.addEntryButton.setOnClickListener {
-            val newEntry = HealthEntry(
-                date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date()),
-                type = "Exercise",
-                description = "Jogged 3 miles"
-            )
-            healthEntryManager.addEntry(newEntry)
-            showToast("Health Entry Added")
-            displayEntries()
-        }
-
-        binding.viewEntriesButton.setOnClickListener {
-            displayEntries()
-        }
-    }
-
-    private fun showAddDietPlanDialog() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.dialog_add_diet_plan)
-
-        val dietPlanSpinner: Spinner = dialog.findViewById(R.id.dietPlanSpinner)
-        val mealFrequencySpinner: Spinner = dialog.findViewById(R.id.mealFrequencySpinner)
-        val glutenFreeCheckBox: CheckBox = dialog.findViewById(R.id.glutenFreeCheckBox)
-        val dairyFreeCheckBox: CheckBox = dialog.findViewById(R.id.dairyFreeCheckBox)
-        val startDateEditText: EditText = dialog.findViewById(R.id.startDateEditText)
-        val goalRadioGroup: RadioGroup = dialog.findViewById(R.id.goalRadioGroup)
-        val addButton: Button = dialog.findViewById(R.id.addDietPlanButton)
-
-        // Setup Spinner options for Diet Plan
-        val dietPlans = arrayOf("Vegan", "Ketogenic", "Mediterranean", "Vegetarian")
-        dietPlanSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, dietPlans)
-
-        // Setup Spinner options for Meal Frequency
-        val mealFrequencies = arrayOf("3 meals/day", "4 meals/day", "5 meals/day", "6 meals/day")
-        mealFrequencySpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, mealFrequencies)
-
-        addButton.setOnClickListener {
-            val selectedDietPlan = dietPlanSpinner.selectedItem.toString()
-            val selectedMealFrequency = mealFrequencySpinner.selectedItem.toString()
-            val glutenFree = glutenFreeCheckBox.isChecked
-            val dairyFree = dairyFreeCheckBox.isChecked
-            val startDate = startDateEditText.text.toString()
-            val selectedGoalId = goalRadioGroup.checkedRadioButtonId
-            val selectedGoal = dialog.findViewById<RadioButton>(selectedGoalId).text.toString()
-
-            val description = buildString {
-                append("Plan: $selectedDietPlan, Goal: $selectedGoal, ")
-                append("Meal Frequency: $selectedMealFrequency, ")
-                append("Gluten-Free: $glutenFree, Dairy-Free: $dairyFree, ")
-                append("Start Date: $startDate")
+        // Handle tab selection
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> navController.navigate(R.id.signInFragment)
+                    1 -> navController.navigate(R.id.signUpFragment)
+                }
             }
 
-            val newEntry = HealthEntry(
-                date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()), // Consider using startDate if it should reflect the entry date
-                type = "Diet Plan",
-                description = description
-            )
-            healthEntryManager.addEntry(newEntry)
-            dialog.dismiss()
-        }
-        dialog.window?.apply {
-            val width = (context.resources.displayMetrics.widthPixels * 0.95).toInt() // Set dialog width to 95% of screen width
-            setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
-        }
-
-        dialog.show()
-    }
-
-
-
-    private fun displayEntries() {
-        val newEntries = healthEntryManager.getEntries()
-        (binding.entriesRecyclerView.adapter as? EntriesAdapter)?.updateEntries(newEntries)
-    }
-
-
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
 }
