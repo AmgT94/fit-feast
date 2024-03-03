@@ -54,8 +54,8 @@ class SignUpFragment : Fragment() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Navigate to DashboardFragment upon successful sign-up
-                    findNavController().navigate(R.id.action_signUpFragment_to_dashboardFragment)
+                    // Navigate to UserProfileCreationFragment upon successful sign-up
+                    findNavController().navigate(R.id.action_signUpFragment_to_userProfileCreationFragment)
                 } else {
                     // Handle errors
                     val exception = task.exception
@@ -66,6 +66,7 @@ class SignUpFragment : Fragment() {
                     }
                 }
             }
+
     }
 
     override fun onDestroyView() {

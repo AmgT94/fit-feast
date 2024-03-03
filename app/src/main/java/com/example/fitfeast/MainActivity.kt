@@ -24,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         // Listen for navigation changes
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
+                R.id.userProfileCreationFragment -> {
+                    // Hide the tabs
+                    binding.tabLayout.visibility = View.GONE
+                }
                 R.id.dashboardFragment -> {
                     binding.tabLayout.visibility = View.GONE
                 }
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         setupTabLayout()
     }

@@ -21,7 +21,18 @@
         android:name="com.example.fitfeast.SignUpFragment"
         android:label="SignUpFragment" >
         <action
-            android:id="@+id/action_signUpFragment_to_dashboardFragment"
+            android:id="@+id/action_signUpFragment_to_userProfileCreationFragment"
+            app:destination="@id/userProfileCreationFragment" />
+    </fragment>
+
+    <!-- UserProfileCreationFragment -->
+    <fragment
+        android:id="@+id/userProfileCreationFragment"
+        android:name="com.example.fitfeast.UserProfileCreationFragment"
+        android:label="UserProfileCreation"
+        tools:layout="@layout/fragment_user_profile_creation" >
+        <action
+            android:id="@+id/action_userProfileCreationFragment_to_dashboardFragment"
             app:destination="@id/dashboardFragment" />
     </fragment>
 

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">FitFeast</string>
-
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
@@ -11,4 +10,12 @@
     <string name="password_input">Input field for your password</string>
     <string name="sign_in_button">Button to sign in to your account</string>
     <string name="forgot_password_text">Text link to reset your password if you have forgotten it</string>
+    <string name="name">Name</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="weight">Weight (kg)</string>
+    <string name="height">Height (cm)</string>
+    <string name="activity_level">Activity Level</string>
+    <string name="submit">Submit</string>
+    <string name="create_profile">Create Profile</string>
 </resources>
