@@ -19,7 +19,6 @@ class SignInFragment : Fragment() {
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
 
-    // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
@@ -31,7 +30,6 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Initialize Firebase Auth
         auth = Firebase.auth
 
         binding.buttonSignIn.setOnClickListener {
@@ -53,7 +51,7 @@ class SignInFragment : Fragment() {
                     // Navigate to DashboardFragment
                     findNavController().navigate(R.id.action_signInFragment_to_dashboardFragment)
                 } else {
-                    // Handle common errors
+                    // Handle errors
                     val exception = task.exception
                     when (exception) {
                         is FirebaseAuthInvalidCredentialsException -> Toast.makeText(context, "Invalid credentials.", Toast.LENGTH_SHORT).show()

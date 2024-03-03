@@ -19,7 +19,6 @@ class SignUpFragment : Fragment() {
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
 
-    // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
@@ -31,7 +30,6 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Initialize Firebase Auth
         auth = Firebase.auth
 
         binding.buttonSignUp.setOnClickListener {
@@ -59,7 +57,7 @@ class SignUpFragment : Fragment() {
                     // Navigate to DashboardFragment upon successful sign-up
                     findNavController().navigate(R.id.action_signUpFragment_to_dashboardFragment)
                 } else {
-                    // Handle common errors
+                    // Handle errors
                     val exception = task.exception
                     when (exception) {
                         is FirebaseAuthWeakPasswordException -> Toast.makeText(context, "Password is too weak.", Toast.LENGTH_SHORT).show()

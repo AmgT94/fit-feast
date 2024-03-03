@@ -25,11 +25,9 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.dashboardFragment -> {
-                    // Hide TabLayout when on the Dashboard
                     binding.tabLayout.visibility = View.GONE
                 }
                 else -> {
-                    // Show TabLayout when not on the Dashboard
                     binding.tabLayout.visibility = View.VISIBLE
                 }
             }
@@ -39,10 +37,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupTabLayout() {
-        // Assuming you have two tabs: Sign In and Sign Up
         val tabTitles = arrayOf("Sign In", "Sign Up")
 
-        // Since we're not using ViewPager, we manually set up TabLayout with NavController
         binding.tabLayout.apply {
             addTab(newTab().setText(tabTitles[0]))
             addTab(newTab().setText(tabTitles[1]))
