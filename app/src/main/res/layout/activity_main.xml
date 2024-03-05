@@ -2,104 +2,30 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/mainTitle"
-        android:layout_width="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FitFeast"
-        android:textSize="24sp"
-        android:textColor="@color/primaryColor"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"/>
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
 
-    <Button
-        android:id="@+id/dietPlanButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Create Diet Plan"
-        android:textColor="@color/textOnPrimary"
-        android:backgroundTint="@color/primaryColor"
-        app:layout_constraintTop_toBottomOf="@id/mainTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <Button
-        android:id="@+id/dailyReportButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Generate Daily Report"
-        android:textColor="@color/textOnPrimary"
-        android:backgroundTint="@color/primaryColor"
-        app:layout_constraintTop_toBottomOf="@id/dietPlanButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <Button
-        android:id="@+id/weeklyReportButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Generate Weekly Report"
-        android:textColor="@color/textOnPrimary"
-        android:backgroundTint="@color/primaryColor"
-        app:layout_constraintTop_toBottomOf="@id/dailyReportButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <Button
-        android:id="@+id/addEntryButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Add Health Entry"
-        android:textColor="@color/textOnPrimary"
-        android:backgroundTint="@color/primaryColor"
-        app:layout_constraintTop_toBottomOf="@id/weeklyReportButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <Button
-        android:id="@+id/viewEntriesButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="View Entries"
-        android:textColor="@color/textOnPrimary"
-        android:backgroundTint="@color/primaryColor"
-        app:layout_constraintTop_toBottomOf="@id/addEntryButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/entriesRecyclerView"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/viewEntriesButton"
+        app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:navGraph="@navigation/nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
