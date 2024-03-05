@@ -41,5 +41,18 @@
         android:id="@+id/dashboardFragment"
         android:name="com.example.fitfeast.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+
+    <!-- Profile Fragment -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.fitfeast.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/profile_fragment" />
+
 </navigation>

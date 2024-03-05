@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpFragment : Fragment() {
 
@@ -54,20 +56,38 @@ class SignUpFragment : Fragment() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Navigate to UserProfileCreationFragment upon successful sign-up
+                    val userProfile = UserProfile()
+                    storeUserData(userProfile)
+
                     findNavController().navigate(R.id.action_signUpFragment_to_userProfileCreationFragment)
                 } else {
-                    // Handle errors
-                    val exception = task.exception
-                    when (exception) {
-                        is FirebaseAuthWeakPasswordException -> Toast.makeText(context, "Password is too weak.", Toast.LENGTH_SHORT).show()
-                        is FirebaseAuthUserCollisionException -> Toast.makeText(context, "An account with this email already exists.", Toast.LENGTH_SHORT).show()
-                        else -> Toast.makeText(context, "Registration failed: ${exception?.message}", Toast.LENGTH_SHORT).show()
-                    }
+                    handleSignUpError(task.exception)
                 }
             }
-
     }
+
+    private fun storeUserData(userProfile: UserProfile) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .set(userProfile)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Profile created successfully!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Error creating profile: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun handleSignUpError(exception: Exception?) {
+        when (exception) {
+            is FirebaseAuthWeakPasswordException -> Toast.makeText(context, "Password is too weak.", Toast.LENGTH_SHORT).show()
+            is FirebaseAuthUserCollisionException -> Toast.makeText(context, "An account with this email already exists.", Toast.LENGTH_SHORT).show()
+            is FirebaseAuthInvalidCredentialsException -> Toast.makeText(context, "Invalid credentials.", Toast.LENGTH_SHORT).show()
+            else -> Toast.makeText(context, "Registration failed: ${exception?.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

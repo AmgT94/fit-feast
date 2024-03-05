@@ -14,6 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.fitfeast.databinding.FragmentUserProfileCreationBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.time.Period
@@ -102,7 +103,6 @@ class UserProfileCreationFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // Check form validity on text change
                 checkFormValidity()
             }
 
@@ -134,14 +134,24 @@ class UserProfileCreationFragment : Fragment() {
     }
 
     private fun addUserProfileToFirestore(userProfile: UserProfile) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection("users").add(userProfile).addOnSuccessListener {
-            Toast.makeText(context, "Profile created successfully!", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_userProfileCreationFragment_to_dashboardFragment)
-        }.addOnFailureListener { e ->
-            Toast.makeText(context, "Error creating profile: ${e.message}", Toast.LENGTH_SHORT).show()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId).set(userProfile)
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Profile created successfully!", Toast.LENGTH_SHORT).show()
+                    // Navigate to the Dashboard Fragment
+                    findNavController().navigate(R.id.action_userProfileCreationFragment_to_dashboardFragment)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error creating profile: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun calculateAge(dob: String): Int {
         val formatter = DateTimeFormatter.ofPattern("M/d/yyyy")

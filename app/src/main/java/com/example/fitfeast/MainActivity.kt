@@ -18,48 +18,52 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set up the NavHostFragment and NavController
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Listen for navigation changes
+        setupTabLayout()
+
+        // Listen for navigation changes to show or hide the TabLayout accordingly
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.userProfileCreationFragment -> {
-                    // Hide the tabs
+                R.id.userProfileCreationFragment, R.id.dashboardFragment -> {
                     binding.tabLayout.visibility = View.GONE
+                    supportActionBar?.show()
+                    supportActionBar?.title = getString(R.string.dashboard)
                 }
-                R.id.dashboardFragment -> {
+                R.id.profileFragment -> {
                     binding.tabLayout.visibility = View.GONE
+                    supportActionBar?.show()
+                    supportActionBar?.title = getString(R.string.profile)
                 }
                 else -> {
                     binding.tabLayout.visibility = View.VISIBLE
+                    supportActionBar?.title = getString(R.string.app_name)
                 }
             }
         }
-
-
-        setupTabLayout()
     }
 
     private fun setupTabLayout() {
         val tabTitles = arrayOf("Sign In", "Sign Up")
 
         binding.tabLayout.apply {
+            removeAllTabs()
             addTab(newTab().setText(tabTitles[0]))
             addTab(newTab().setText(tabTitles[1]))
-        }
 
-        // Handle tab selection
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> navController.navigate(R.id.signInFragment)
-                    1 -> navController.navigate(R.id.signUpFragment)
+            addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    when (tab.position) {
+                        0 -> navController.navigate(R.id.signInFragment)
+                        1 -> navController.navigate(R.id.signUpFragment)
+                    }
                 }
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
+                override fun onTabUnselected(tab: TabLayout.Tab) {}
+                override fun onTabReselected(tab: TabLayout.Tab) {}
+            })
+        }
     }
 }
+

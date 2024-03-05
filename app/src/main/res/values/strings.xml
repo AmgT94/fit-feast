@@ -10,6 +10,7 @@
     <string name="password_input">Input field for your password</string>
     <string name="sign_in_button">Button to sign in to your account</string>
     <string name="forgot_password_text">Text link to reset your password if you have forgotten it</string>
+
     <string name="name">Name</string>
     <string name="dob">Date of Birth</string>
     <string name="gender">Gender</string>
@@ -18,4 +19,11 @@
     <string name="activity_level">Activity Level</string>
     <string name="submit">Submit</string>
     <string name="create_profile">Create Profile</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="edit">Edit</string>
+    <string name="profile">Profile</string>
+
 </resources>
