@@ -1,0 +1,6 @@
+<resources>
+    <style name="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/TextAppearance.MaterialComponents.Caption</item>
+        <item name="errorTextAppearance">@style/TextAppearance.MaterialComponents.Caption</item>
+    </style>
+</resources>

@@ -10,4 +10,11 @@
         <item>Active: moderate physical activity 3-5 days/week</item>
         <item>Very Active: hard physical activity 6-7 days a week</item>
     </string-array>
+    <string-array name="instructions_options">
+        <item>Before food</item>
+        <item>With food</item>
+        <item>After food</item>
+        <item>Doesn\'t matter</item>
+    </string-array>
+
 </resources>

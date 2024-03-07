@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.FitFeast" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Base theme customization goes here -->
     </style>
 
-    <style name="Theme.FitFeast" parent="Base.Theme.FitFeast" />
+    <!-- Application theme that applies customizations -->
+    <style name="Theme.FitFeast" parent="Base.Theme.FitFeast">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryContainer">@color/primaryDarkColor</item>
+        <item name="colorOnPrimary">@color/textOnPrimary</item>
+        <!-- Background color. -->
+        <item name="android:colorBackground">@color/background</item>
+        <!-- Status bar color, consider using colorPrimaryVariant if needed -->
+        <!-- Ensure you are using Material 3 attributes correctly -->
+        <!-- For Material 3, use colorOnPrimaryContainer for text/icons on primary container surfaces -->
+    </style>
 </resources>

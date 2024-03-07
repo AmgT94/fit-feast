@@ -9,5 +9,18 @@ data class UserProfile(
     var weightUnit: String = "kg",
     var height: Double = 0.0,
     var heightUnit: String = "cm",
-    var activityLevel: String = ""
+    var activityLevel: String = "",
+    var medications: List<Medication> = emptyList()
 )
+
+data class Medication(
+    val id: String = "",
+    val name: String = "",
+    val startDate: String = "",
+    val instructions: String = "",
+    val pillQuantity: Int = 0,
+    val repeatDays: List<String> = emptyList(),
+    val notes: String = ""
+)
+
+

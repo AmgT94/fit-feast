@@ -26,4 +26,30 @@
     <string name="edit">Edit</string>
     <string name="profile">Profile</string>
 
+    <string name="add_medication">Add medication</string>
+    <string name="medication_name">Medication name</string>
+    <string name="medication_name_required">Medication name required</string>
+    <string name="medication_added">Medication added</string>
+    <string name="error_adding_medication">Couldn\'t add medication</string>
+    <string name="start_date">Start Date</string>
+    <string name="pill_quantity">Pill Quantity</string>
+    <string name="notes">Add Notes</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thur</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+    <string name="instructions">Instructions</string>
+    <string name="repeat_header">Repeat</string>
+    <string name="notes_header">Notes</string>
+    <string name="pill_quantity_header">Pill Quantity</string>
+    <string name="instructions_header">Instructions</string>
+    <string name="start_date_header">Start Date</string>
+    <string name="medication_name_header">Medication name</string>
+    <string name="edit_medication">Edit Medication</string>
+    <string name="delete_medication">Delete Medication</string>
+    <string name="repeat_days">Repeat Days</string>
+
 </resources>

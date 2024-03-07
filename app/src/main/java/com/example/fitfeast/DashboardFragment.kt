@@ -12,56 +12,55 @@ import androidx.appcompat.widget.Toolbar
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.fitfeast.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
 
-    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var binding: FragmentDashboardBinding
     private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val toolbar: Toolbar = view.findViewById(R.id.toolbar)
+        val toolbar: Toolbar = binding.toolbar
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
-        drawerLayout = view.findViewById(R.id.drawer_layout)
-
-        // Set up the ActionBarDrawerToggle
         toggle = ActionBarDrawerToggle(
-            activity, drawerLayout, toolbar,
+            activity, binding.drawerLayout, toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
 
-        drawerLayout.addDrawerListener(toggle)
-
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+
+        setupNavigationView()
 
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Set up the NavigationView
-        val navigationView: NavigationView = view.findViewById(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            // Handle menu item click
+    private fun setupNavigationView() {
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_dashboard -> {
+                    findNavController().navigate(R.id.dashboardFragment)
+                }
+                R.id.nav_goals -> {
+                }
+                R.id.nav_weight -> {
+                }
+                R.id.nav_medication -> {
+                    findNavController().navigate(R.id.medicationFragment)
+                }
+            }
             menuItem.isChecked = true
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
             true
         }
-
-        val headerView = navigationView.getHeaderView(0)
-        val editButton = headerView.findViewById<ImageButton>(R.id.editProfileButton)
-
-        editButton.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboardFragment_to_profileFragment)
-        }
-
     }
 
     override fun onResume() {
