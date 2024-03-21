@@ -35,24 +35,17 @@ class DashboardFragment : Fragment() {
         // Inflate the layout for this fragment using binding
         binding = FragmentDashboardBinding.inflate(inflater, container, false)
 
-        // Set the toolbar as the app bar for the activity
-        val toolbar: Toolbar = binding.toolbar
-        val appCompatActivity = activity as AppCompatActivity
-        appCompatActivity.setSupportActionBar(toolbar)
-
-        appCompatActivity.supportActionBar?.title = ""
-
         return binding.root
     }
 
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Set the toolbar as the app bar.
-        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
 
-        //(activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.dashboard)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.dashboard)
     }
+
 
     override fun onResume() {
         super.onResume()
