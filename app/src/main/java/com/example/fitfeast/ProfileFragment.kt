@@ -27,6 +27,8 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 class ProfileFragment : Fragment() {
 
@@ -46,6 +48,44 @@ class ProfileFragment : Fragment() {
             }
         }
     }
+
+
+    private fun uploadImageToFirebaseStorage(imageUri: Uri) {
+        val userId = auth.currentUser?.uid ?: return
+        val imageRef = storage.reference.child("profileImages/$userId.jpg")
+
+        imageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    updateUserProfileImageUrl(uri.toString()) {
+                        // Set the image using Glide
+                        activity?.runOnUiThread {
+                            Glide.with(this@ProfileFragment)
+                                .load(uri)
+                                .apply(RequestOptions().centerCrop())
+                                .into(binding.profileImageView)
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateUserProfileImageUrl(imageUrl: String, onSuccess: () -> Unit) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        firestore.collection("users").document(userId)
+            .update("profileImageUrl", imageUrl)
+            .addOnSuccessListener {
+                Log.d("ProfileFragment", "Profile image URL updated successfully.")
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ProfileFragment", "Error updating profile image URL", e)
+            }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = ProfileFragmentBinding.inflate(inflater, container, false)
@@ -120,7 +160,6 @@ class ProfileFragment : Fragment() {
     }
 
 
-
     private fun loadUserProfile() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
@@ -145,6 +184,12 @@ class ProfileFragment : Fragment() {
                             // Enable the "Update Profile" button as the profile is successfully loaded
                             binding.updateProfileButton.isEnabled = true
 
+                            // Load the profile image
+                            Glide.with(this@ProfileFragment)
+                                .load(it.profileImageUrl)
+                                .apply(RequestOptions().placeholder(R.drawable.ic_add_a_photo).centerCrop())
+                                .into(binding.profileImageView)
+
                             Log.d("ProfileFragment", "User profile loaded successfully")
                         } ?: run {
                             Log.d("ProfileFragment", "User profile is null")
@@ -166,8 +211,6 @@ class ProfileFragment : Fragment() {
 
 
 
-
-
     private fun setupProfilePictureUpload() {
         binding.profileImageView.setOnClickListener {
             val pickImageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -175,19 +218,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageUri: Uri) {
-        val userId = auth.currentUser?.uid ?: return
-        val imageRef = storage.reference.child("profileImages/$userId.jpg")
-        imageRef.putFile(imageUri)
-            .addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    binding.profileImageView.setImageURI(uri)
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+
 
     private fun setupEditIcons() {
         binding.editDobIcon.setOnClickListener {

@@ -10,7 +10,8 @@ data class UserProfile(
     var height: Double = 0.0,
     var heightUnit: String = "cm",
     var activityLevel: String = "",
-    var medications: List<Medication> = emptyList()
+    var medications: List<Medication> = emptyList(),
+    var profileImageUrl: String = ""
 )
 
 data class Medication(

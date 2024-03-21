@@ -51,6 +51,6 @@
     <string name="edit_medication">Edit Medication</string>
     <string name="delete_medication">Delete Medication</string>
     <string name="repeat_days">Repeat Days</string>
-    <string name="medication">Your Medications</string>
+    <string name="medication">Medications</string>
 
 </resources>

@@ -3,6 +3,8 @@ package com.example.fitfeast
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -14,6 +16,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import com.google.android.material.tabs.TabLayout
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,16 +33,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Set up the toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbarMain)
 
         // Set up the NavHostFragment and NavController
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         setupTabLayout()
-
         setupDrawer()
+
+        // Fetch and set the user's name in the navigation drawer header
+        setupNavigationHeader()
 
         // Listen for navigation changes to update UI components accordingly
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -78,10 +84,47 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-
     }
+    private fun setupNavigationHeader() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            FirebaseFirestore.getInstance().collection("users").document(userId).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val userProfile = documentSnapshot.toObject(UserProfile::class.java)
+                    val headerView: View = binding.navView.getHeaderView(0)
+                    val imageViewHeader: ImageView = headerView.findViewById(R.id.imageViewHeader)
+                    val textViewHeaderName: TextView = headerView.findViewById(R.id.textViewHeaderName)
+                    textViewHeaderName.text = userProfile?.name ?: "Guest"
+
+                    // Load the profile image as a circle
+                    Glide.with(this)
+                        .load(userProfile?.profileImageUrl)
+                        .placeholder(R.drawable.ic_add_a_photo)
+                        .circleCrop()
+                        .into(imageViewHeader)
+                }
+                .addOnFailureListener { e ->
+                    // Handle the failure
+                    val headerView: View = binding.navView.getHeaderView(0)
+                    val imageViewHeader: ImageView = headerView.findViewById(R.id.imageViewHeader)
+                    Glide.with(this)
+                        .load(R.drawable.ic_add_a_photo)
+                        .circleCrop()
+                        .into(imageViewHeader)
+                }
+        } else {
+            // User is not signed in; set a default name and image
+            val headerView: View = binding.navView.getHeaderView(0)
+            val imageViewHeader: ImageView = headerView.findViewById(R.id.imageViewHeader)
+            val textViewHeaderName: TextView = headerView.findViewById(R.id.textViewHeaderName)
+            textViewHeaderName.text = "Guest"
+            Glide.with(this)
+                .load(R.drawable.ic_add_a_photo)
+                .circleCrop()
+                .into(imageViewHeader)
+        }
+    }
+
 
     private fun setupDrawer() {
         drawerToggle = ActionBarDrawerToggle(
@@ -104,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_weight -> {
                 }
                 R.id.nav_medication -> navController.navigate(R.id.medicationFragment)
-                // ... add other menu items here
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
