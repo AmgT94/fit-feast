@@ -142,9 +142,9 @@ class MainActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_dashboard -> navController.navigate(R.id.dashboardFragment)
-                R.id.nav_goals -> {
-                }
+                R.id.nav_goals -> navController.navigate(R.id.goalsFragment)
                 R.id.nav_weight -> {
+                    // Handle navigation to WeightFragment
                 }
                 R.id.nav_medication -> navController.navigate(R.id.medicationFragment)
             }
@@ -162,6 +162,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
+
 
 
     private fun setDrawerEnabled(enabled: Boolean) {

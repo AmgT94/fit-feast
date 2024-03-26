@@ -62,6 +62,12 @@
         tools:layout="@layout/fragment_medication" >
     </fragment>
 
+    <!-- Goals Fragment -->
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.example.fitfeast.GoalsFragment"
+        android:label="Goals"
+        tools:layout="@layout/fragment_goals" />
 
 
 </navigation>

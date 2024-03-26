@@ -53,4 +53,12 @@
     <string name="repeat_days">Repeat Days</string>
     <string name="medication">Medications</string>
 
+    <string name="calories_text">Calories: %1$.2f Kcal</string>
+    <string name="fat_grams_text">Fat: %1$.2f g</string>
+    <string name="carbs_grams_text">Carbohydrates: %1$.2f g</string>
+    <string name="protein_grams_text">Protein: %1$.2f g</string>
+    <string name="weight_loss">Weight Loss</string>
+    <string name="weight_gain">Weight Gain</string>
+
+
 </resources>

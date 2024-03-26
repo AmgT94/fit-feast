@@ -24,4 +24,15 @@ data class Medication(
     val notes: String = ""
 )
 
+data class Goal(
+    val title: String,
+    val description: String
+)
 
+data class NutritionData(
+    val calories: Double = 0.0,
+    val fatGrams: Double = 0.0,
+    val carbsGrams: Double = 0.0,
+    val proteinGrams: Double = 0.0,
+    val timestamp: Long = System.currentTimeMillis()
+)
