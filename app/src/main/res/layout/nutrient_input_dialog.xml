@@ -141,6 +141,15 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/errorMessageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total percentage must equal 100%"
+        android:textColor="@color/errorColor"
+        android:visibility="gone"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="8dp"/>
 
 
 

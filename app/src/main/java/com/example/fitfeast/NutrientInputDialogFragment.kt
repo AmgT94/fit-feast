@@ -29,6 +29,8 @@ class NutrientInputDialogFragment : DialogFragment() {
     private var carbsGramsTextView: TextView? = null
     private var proteinGramsTextView: TextView? = null
 
+    private lateinit var errorMessageTextView: TextView
+
     // Define a listener interface for communication with the host fragment or activity.
     private var listener: NutrientInputListener? = null
 
@@ -58,28 +60,33 @@ class NutrientInputDialogFragment : DialogFragment() {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         dialogBuilder.setTitle("Nutrient Intake")
             .setView(view)
-            .setPositiveButton("Update") { dialog, id ->
-                if (validateInputs()) {
-                    val calories = caloriesInput?.text.toString().toDoubleOrNull() ?: 0.0
-                    val fatPercentage = fatPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
-                    val carbsPercentage = carbsPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
-                    val proteinPercentage = proteinPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+            .setPositiveButton("Update") { dialog, _ ->
+                // Extract the values from EditText fields
+                val calories = caloriesInput?.text.toString().toDoubleOrNull() ?: 0.0
+                val fatPercentage = fatPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+                val carbsPercentage = carbsPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+                val proteinPercentage = proteinPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
 
+                // Calculate the total percentage
+                val totalPercentage = fatPercentage + carbsPercentage + proteinPercentage
+                if (totalPercentage == 100.0) {
+                    // If valid, calculate grams and notify listener
                     val fatGrams = calculateFatGrams(calories, fatPercentage)
                     val carbsGrams = calculateCarbsGrams(calories, carbsPercentage)
                     val proteinGrams = calculateProteinGrams(calories, proteinPercentage)
 
                     listener?.onUpdateNutrientInput(calories, fatGrams, carbsGrams, proteinGrams)
                 } else {
-                    // Prevent dialog from dismissing if inputs are invalid.
-                    dialog.cancel()
-                    Toast.makeText(context, "Please correct the inputs.", Toast.LENGTH_LONG).show()
+                    // If invalid, show an error and prevent the dialog from closing
+                    Toast.makeText(context, "Total percentage must equal 100%. Please adjust the values.", Toast.LENGTH_LONG).show()
+                    dialog.cancel() // Keep the dialog open for corrections
                 }
             }
             .setNegativeButton("Cancel", null)
 
         return dialogBuilder.create()
     }
+
 
 
     // Initializes the view components by finding them in the layout.
@@ -91,6 +98,7 @@ class NutrientInputDialogFragment : DialogFragment() {
         fatGramsTextView = view.findViewById(R.id.fatGrams)
         carbsGramsTextView = view.findViewById(R.id.carbsGrams)
         proteinGramsTextView = view.findViewById(R.id.proteinGrams)
+        errorMessageTextView = view.findViewById(R.id.errorMessageTextView)
     }
 
     // Sets up text watchers for the input fields to enable real-time calculation.
@@ -99,6 +107,7 @@ class NutrientInputDialogFragment : DialogFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
+                updateInputFields()
                 calculateAndDisplayMacronutrients()
             }
         }
@@ -109,13 +118,52 @@ class NutrientInputDialogFragment : DialogFragment() {
         proteinPercentageInput?.addTextChangedListener(textWatcher)
     }
 
+    // Method to validate and update the enable state of input fields
+    private fun updateInputFields() {
+        val fatPercentage = fatPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+        val carbsPercentage = carbsPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+        val proteinPercentage = proteinPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
+
+        val totalPercentage = fatPercentage + carbsPercentage + proteinPercentage
+
+        // Initially, assume all fields can be edited
+        fatPercentageInput?.isEnabled = true
+        carbsPercentageInput?.isEnabled = true
+        proteinPercentageInput?.isEnabled = true
+
+        // Hide the error message by default
+        errorMessageTextView.visibility = View.GONE
+
+        // Logic to enable or disable fields based on total percentage
+        if (totalPercentage == 100.0) {
+            if (fatPercentage == 0.0) fatPercentageInput?.isEnabled = true
+            if (carbsPercentage == 0.0) carbsPercentageInput?.isEnabled = true
+            if (proteinPercentage == 0.0) proteinPercentageInput?.isEnabled = true
+        } else if (totalPercentage > 100) {
+            // Show error message if the total percentage exceeds 100%
+            errorMessageTextView.visibility = View.VISIBLE
+            errorMessageTextView.text = "Total percentage cannot exceed 100%. Please adjust the values."
+        }
+
+        // Disable other fields if one is set to 100%
+        if (fatPercentage == 100.0) {
+            carbsPercentageInput?.isEnabled = false
+            proteinPercentageInput?.isEnabled = false
+        } else if (carbsPercentage == 100.0) {
+            fatPercentageInput?.isEnabled = false
+            proteinPercentageInput?.isEnabled = false
+        } else if (proteinPercentage == 100.0) {
+            fatPercentageInput?.isEnabled = false
+            carbsPercentageInput?.isEnabled = false
+        }
+    }
+
 
     // Validates the input values before processing.
     private fun validateInputs(): Boolean {
         val calories = caloriesInput?.text.toString().toDoubleOrNull()
         if (calories == null || calories <= 0.0) {
-            Toast.makeText(context, "Please enter a valid calorie amount.", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(context, "Please enter a valid calorie amount.", Toast.LENGTH_SHORT).show()
             return false
         }
 
@@ -124,12 +172,8 @@ class NutrientInputDialogFragment : DialogFragment() {
         val proteinPercentage = proteinPercentageInput?.text.toString().toDoubleOrNull() ?: 0.0
 
         val totalPercentage = fatPercentage + carbsPercentage + proteinPercentage
-        if (totalPercentage > 100) {
-            Toast.makeText(
-                context,
-                "The sum of macronutrient percentages cannot exceed 100%.",
-                Toast.LENGTH_SHORT
-            ).show()
+        if (totalPercentage != 100.0) {
+            Toast.makeText(context, "The sum of macronutrient percentages must equal 100%.", Toast.LENGTH_SHORT).show()
             return false
         }
 
