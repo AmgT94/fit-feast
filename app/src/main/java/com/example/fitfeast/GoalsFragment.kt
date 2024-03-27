@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -38,35 +39,39 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
     ): View {
         val view = inflater.inflate(R.layout.fragment_goals, container, false)
 
+        // Initialize RecyclerView and Adapter for the goals
         recyclerView = view.findViewById(R.id.goalsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
+        val goalsData = listOf(
+            Goal("Water Intake", "Keep track of your hydration."),
+            Goal("Weight Management", "Monitor your weight gain or loss.")
+        )
+        goalsAdapter = GoalsAdapter(goalsData)
+        recyclerView.adapter = goalsAdapter
 
+        // Initialize FloatingActionButton
+        mainFab = view.findViewById(R.id.mainFab)
+        weightLossFab = view.findViewById(R.id.weightLossFab)
+        weightGainFab = view.findViewById(R.id.weightGainFab)
+
+        // Initialize TextViews for the Macronutrient information
         caloriesTextView = view.findViewById(R.id.caloriesTextView)
         fatGramsTextView = view.findViewById(R.id.fatGramsTextView)
         carbsGramsTextView = view.findViewById(R.id.carbsGramsTextView)
         proteinGramsTextView = view.findViewById(R.id.proteinGramsTextView)
 
-        val goalsData = listOf(
-            Goal("Nutrients Intake", "Track your daily nutrients intake."),
-            Goal("Water Intake", "Keep track of your hydration."),
-            Goal("Weight Management", "Monitor your weight gain or loss.")
-        )
-
-        goalsAdapter = GoalsAdapter(goalsData)
-        recyclerView.adapter = goalsAdapter
-
-        mainFab = view.findViewById(R.id.mainFab)
-        weightLossFab = view.findViewById(R.id.weightLossFab)
-        weightGainFab = view.findViewById(R.id.weightGainFab)
-
-        // Attach the OnClickListener to the macronutrientsCard to show nutrient input dialog
+        // Set OnClickListener for the Macronutrients Card to show the Nutrient Input Dialog
         val macronutrientsCard: CardView = view.findViewById(R.id.macronutrientsCard)
         macronutrientsCard.setOnClickListener {
             showNutrientInputDialog()
         }
 
+        // Fetch and display the latest nutrition data
+        fetchLatestNutritionData()
+
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,6 +92,12 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
         //method call to fetch and display nutrition data
                 fetchLatestNutritionData()
     }
+
+    override fun onResume() {
+        super.onResume()
+        fetchLatestNutritionData()
+    }
+
     private fun fetchLatestNutritionData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance().collection("users").document(userId)
@@ -95,11 +106,11 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
                     Log.d("NutritionData", "No nutrition data found for user")
-                    return@addOnSuccessListener
-                }
-                for (document in documents) {
-                    val data = document.toObject(NutritionData::class.java)
-                    updateNutritionUI(data.calories, data.fatGrams, data.carbsGrams, data.proteinGrams)
+                } else {
+                    val data = documents.documents.first().toObject(NutritionData::class.java)
+                    data?.let {
+                        updateNutritionUI(it.calories, it.fatGrams, it.carbsGrams, it.proteinGrams)
+                    }
                 }
             }
             .addOnFailureListener { e ->
@@ -107,6 +118,7 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
                 Toast.makeText(context, "Failed to fetch user data.", Toast.LENGTH_SHORT).show()
             }
     }
+
     private fun toggleFabMenu() {
         if (!isFabMenuOpen) {
             weightLossFab.show()
@@ -149,7 +161,8 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
                 "calories" to calories,
                 "fatGrams" to fatGrams,
                 "carbsGrams" to carbsGrams,
-                "proteinGrams" to proteinGrams
+                "proteinGrams" to proteinGrams,
+                "timestamp" to FieldValue.serverTimestamp()
             )
 
             FirebaseFirestore.getInstance().collection("users").document(userId)

@@ -1,5 +1,8 @@
 package com.example.fitfeast
 
+import com.google.firebase.Timestamp
+
+
 data class UserProfile(
     var name: String = "",
     var dateOfBirth: String = "",
@@ -34,5 +37,5 @@ data class NutritionData(
     val fatGrams: Double = 0.0,
     val carbsGrams: Double = 0.0,
     val proteinGrams: Double = 0.0,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Timestamp = Timestamp.now()
 )
