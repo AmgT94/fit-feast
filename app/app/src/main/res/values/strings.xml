@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">FitFeast</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="email_input">Input field for your email address</string>
+    <string name="password_input">Input field for your password</string>
+    <string name="sign_in_button">Button to sign in to your account</string>
+    <string name="forgot_password_text">Text link to reset your password if you have forgotten it</string>
+
+    <string name="name">Name</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="weight">Weight (kg)</string>
+    <string name="height">Height (cm)</string>
+    <string name="activity_level">Activity Level</string>
+    <string name="submit">Submit</string>
+    <string name="create_profile">Create Profile</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="edit">Edit</string>
+    <string name="profile">Profile</string>
+
+    <string name="add_medication">Add medication</string>
+    <string name="medication_name">Medication name</string>
+    <string name="medication_name_required">Medication name required</string>
+    <string name="medication_added">Medication added</string>
+    <string name="error_adding_medication">Couldn\'t add medication</string>
+    <string name="start_date">Start Date</string>
+    <string name="pill_quantity">Pill Quantity</string>
+    <string name="notes">Add Notes</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thur</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+    <string name="instructions">Instructions</string>
+    <string name="repeat_header">Repeat</string>
+    <string name="notes_header">Notes</string>
+    <string name="pill_quantity_header">Pill Quantity</string>
+    <string name="instructions_header">Instructions</string>
+    <string name="start_date_header">Start Date</string>
+    <string name="medication_name_header">Medication name</string>
+    <string name="edit_medication">Edit Medication</string>
+    <string name="delete_medication">Delete Medication</string>
+    <string name="repeat_days">Repeat Days</string>
+    <string name="medication">Medications</string>
+
+    <string name="calories_text">%1$.2f Kcal</string>
+    <string name="fat_grams_text">%1$.2f g</string>
+    <string name="carbs_grams_text">%1$.2f g</string>
+    <string name="protein_grams_text">%1$.2f g</string>
+    <string name="weight_loss">Weight Loss</string>
+    <string name="weight_gain">Weight Gain</string>
+
+    <string name="no_data_available">No data available</string>
+    <string name="keep_track_of_hydration">Keep track of your hydration.</string>
+    <string name="water_intake_goal">Water intake goal: %1$.2f liters</string>
+    <string name="water_intake_format">%1$.2f Liters</string>
+
+
+</resources>

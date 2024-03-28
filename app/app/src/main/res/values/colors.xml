@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primaryColor">#87CEEB</color>
+    <color name="primaryLightColor">#98FB98</color>
+    <color name="primaryDarkColor">#0A00B6</color>
+    <color name="secondaryLightColor">#FFDAB9</color>
+    <color name="textOnPrimary">#FFFFFF</color>
+    <color name="background">#F0F0F0</color>
+
+    <color name="secondaryTextColor">#757575</color>
+    <color name="secondaryColor">#FFC107</color>
+
+
+    <color name="nav_header_start">#FF33B5E5</color>
+    <color name="nav_header_end">#FFAA66CC</color>
+
+    <!-- Specific to the Macro Nutrients Card -->
+    <color name="cardBackground">#F5F5F5</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="errorColor">#910000</color>
+
+</resources>
