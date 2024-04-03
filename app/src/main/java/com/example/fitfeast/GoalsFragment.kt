@@ -17,7 +17,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListener, GoalsAdapter.OnGoalClickListener, WaterIntakeDialogFragment.WaterIntakeDialogListener {
+class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListener,
+    GoalsAdapter.OnGoalClickListener, WaterIntakeDialogFragment.WaterIntakeDialogListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var goalsAdapter: GoalsAdapter

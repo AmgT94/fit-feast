@@ -76,6 +76,12 @@ class MainActivity : AppCompatActivity() {
                     setTabsVisibility(true)
                     supportActionBar?.hide()
                 }
+                R.id.goalsFragment -> {
+                    setDrawerEnabled(true)
+                    setTabsVisibility(false)
+                    supportActionBar?.show()
+                    supportActionBar?.title = getString(R.string.goals)
+                }
                 else -> {
                     setDrawerEnabled(false)
                     setTabsVisibility(false)
