@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
 
     <!-- Medication Name Input -->
     <com.google.android.material.textfield.TextInputLayout
@@ -86,7 +90,7 @@
         android:layout_marginTop="8dp"
         app:chipSpacingHorizontal="8dp"
         app:singleSelection="false"
-        app:selectionRequired="true">
+        app:selectionRequired="false">
 
         <!-- Days -->
         <com.google.android.material.chip.Chip
@@ -146,7 +150,17 @@
             android:checkable="true"/>
     </com.google.android.material.chip.ChipGroup>
 
-
+    <!-- Error TextView for ChipGroup -->
+        <TextView
+            android:id="@+id/chipGroupError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please select at least one day."
+            android:textColor="@color/errorColor"
+            android:visibility="gone"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
 
     <!-- Notes Input -->
@@ -165,3 +179,4 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
+</ScrollView>

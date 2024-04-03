@@ -7,6 +7,8 @@ import android.icu.util.Calendar
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -49,34 +51,66 @@ class AddMedicationDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = DialogAddMedicationBinding.inflate(LayoutInflater.from(context))
+        _binding = DialogAddMedicationBinding.inflate(layoutInflater)
 
         setupInstructionsDropdown()
-
 
         binding.startDateEditText.setOnClickListener {
             showDatePickerDialog()
         }
 
+        // Setup chip selection listener for each chip
+        setupChipGroupListener()
 
-        // Initialize dialog
+        // Check if we're in edit mode and fetch existing medication data
+        medicationId?.let {
+            fetchAndPopulateMedicationData(it)
+        }
+
         val dialogBuilder = MaterialAlertDialogBuilder(requireContext())
             .setTitle(if (medicationId == null) "Add Medication" else "Edit Medication")
             .setView(binding.root)
-            .setPositiveButton(if (medicationId == null) "Add" else "Update") { dialog, which ->
-                attemptToSaveMedication()
-            }
+            .setPositiveButton(if (medicationId == null) "Add" else "Update", null)
             .setNegativeButton("Cancel", null)
 
-        // If in edit mode, fetch and populate the data
         medicationId?.let {
             dialogBuilder.setNeutralButton("Delete") { _, _ ->
                 showDeleteConfirmationDialog(it)
             }
         }
 
-        return dialogBuilder.create()
+        val dialog = dialogBuilder.create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
+                attemptToSaveMedication(dialog)
+            }
+        }
+
+        return dialog
     }
+
+
+    private fun setupChipGroupListener() {
+        val chipGroup = binding.daysChipGroup
+        for (index in 0 until chipGroup.childCount) {
+            val chip = chipGroup.getChildAt(index) as? Chip
+            chip?.setOnCheckedChangeListener { _, _ ->
+                // Call updateChipGroupErrorVisibility every time any chip's checked state changes
+                updateChipGroupErrorVisibility()
+            }
+        }
+    }
+
+    private fun updateChipGroupErrorVisibility() {
+        val anyChipChecked = (0 until binding.daysChipGroup.childCount).any { index ->
+            (binding.daysChipGroup.getChildAt(index) as? Chip)?.isChecked == true
+        }
+        binding.chipGroupError.visibility = if (anyChipChecked) View.GONE else View.VISIBLE
+    }
+
+
 
     private fun showDeleteConfirmationDialog(medicationId: String) {
         MaterialAlertDialogBuilder(requireContext())
@@ -94,10 +128,11 @@ class AddMedicationDialogFragment : DialogFragment() {
         FirebaseFirestore.getInstance().collection("users").document(userId)
             .collection("medications").document(medicationId).delete()
             .addOnSuccessListener {
+                Log.d("DeleteMedication", "Showing toast for successful deletion.")
+                // Use isAdded to check if Fragment is currently added to its activity
                 if (isAdded) {
                     Toast.makeText(context, "Medication deleted successfully", Toast.LENGTH_SHORT).show()
                     updateListener?.onMedicationUpdated()
-                    dismiss()
                 }
             }
             .addOnFailureListener { e ->
@@ -106,6 +141,7 @@ class AddMedicationDialogFragment : DialogFragment() {
                 }
             }
     }
+
 
 
     private fun validateChipSelection(): Boolean {
@@ -136,8 +172,15 @@ class AddMedicationDialogFragment : DialogFragment() {
             R.array.instructions_options,
             android.R.layout.simple_dropdown_item_1line
         )
-        binding.instructionsSpinner.setAdapter(instructionsAdapter)
+        binding.instructionsSpinner.apply {
+            setAdapter(instructionsAdapter)
+            onItemClickListener = AdapterView.OnItemClickListener { _, _, _, _ ->
+                // Clear error when an item is selected
+                binding.instructionsLayout.error = null
+            }
+        }
     }
+
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
@@ -164,122 +207,163 @@ class AddMedicationDialogFragment : DialogFragment() {
 
 
     private fun fetchAndPopulateMedicationData(medicationId: String) {
-        // Fetch medication data from Firestore and populate the form fields
+        // Fetch medication data from Firestore
         FirebaseFirestore.getInstance().collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid ?: "")
             .collection("medications").document(medicationId).get()
             .addOnSuccessListener { documentSnapshot ->
                 val medication = documentSnapshot.toObject(Medication::class.java)
                 medication?.let {
+                    // Populate form fields with fetched data
                     binding.medicationNameEditText.setText(it.name)
                     binding.startDateEditText.setText(it.startDate)
                     binding.instructionsSpinner.setText(it.instructions, false)
                     binding.pillQuantityEditText.setText(it.pillQuantity.toString())
                     binding.notesEditText.setText(it.notes)
-                    // Handle repeatDays chips selection
+
+                    // Highlight corresponding chips for the repeatDays
+                    val chipGroup = binding.daysChipGroup
+                    chipGroup.clearCheck()
                     it.repeatDays.forEach { day ->
-                        val chip = binding.daysChipGroup.findViewWithTag<Chip>(day)
-                        chip?.isChecked = true // Ensure chip is not null before calling setChecked
+                        for (i in 0 until chipGroup.childCount) {
+                            val chip = chipGroup.getChildAt(i) as Chip
+                            if (chip.tag.toString().equals(day, ignoreCase = true)) {
+                                chip.isChecked = true
+                                break
+                            }
+                        }
                     }
                 }
-            }
-            .addOnFailureListener { e ->
-                Log.e("FetchMedication", "Error fetching medication details", e)
+            }.addOnFailureListener { e ->
+                Log.e("FetchMedication", "Error fetching medication details: ${e.message}", e)
             }
     }
 
 
-    private fun attemptToSaveMedication() {
+
+    private fun attemptToSaveMedication(dialog: Dialog) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
             Toast.makeText(context, "User not identified", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Validate chip selection
-        if (!validateChipSelection()) {
-            Toast.makeText(context, "Please select at least one day.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        // Clear previous errors
+        binding.medicationNameLayout.error = null
+        binding.startDateLayout.error = null
+        binding.instructionsLayout.error = null // Clear error for instructions
+        binding.pillQuantityLayout.error = null
 
         // Extract values directly from the form
         val name = binding.medicationNameEditText.text.toString().trim()
         val startDate = binding.startDateEditText.text.toString().trim()
         val instructions = binding.instructionsSpinner.text.toString()
-        val pillQuantityText = binding.pillQuantityEditText.text.toString()
+        val pillQuantityText = binding.pillQuantityEditText.text.toString().trim()
         val notes = binding.notesEditText.text.toString().trim()
 
-        // Basic validation
-        if (name.isEmpty() || startDate.isEmpty() || pillQuantityText.isEmpty()) {
-            Toast.makeText(context, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
-            return
+        // Flag to indicate if there are any validation errors
+        var hasError = false
+
+        // Validate chip selection
+        if (!validateChipSelection()) {
+            binding.chipGroupError.visibility = View.VISIBLE // Show error
+            hasError = true
+        } else {
+            binding.chipGroupError.visibility = View.GONE // Hide error if valid selection
         }
 
-        val pillQuantity = pillQuantityText.toIntOrNull()
-        if (pillQuantity == null || pillQuantity <= 0) {
-            Toast.makeText(context, "Pill quantity must be a positive number.", Toast.LENGTH_SHORT).show()
-            return
+        // Validate instructions selection
+        if (instructions.isEmpty()) {
+            binding.instructionsLayout.error = "Instructions are required"
+            hasError = true
         }
+
+        // Basic validation with inline error messages
+        if (name.isEmpty()) {
+            binding.medicationNameLayout.error = "Medication name is required"
+            hasError = true
+        }
+
+        if (startDate.isEmpty()) {
+            binding.startDateLayout.error = "Start date is required"
+            hasError = true
+        }
+
+        if (pillQuantityText.isEmpty()) {
+            binding.pillQuantityLayout.error = "Pill quantity is required"
+            hasError = true
+        } else {
+            val pillQuantity = pillQuantityText.toIntOrNull()
+            if (pillQuantity == null || pillQuantity <= 0) {
+                binding.pillQuantityLayout.error = "Pill quantity must be a positive number"
+                hasError = true
+            }
+        }
+
+        // Stop the method if there are validation errors
+        if (hasError) return
+
+        // Assuming pillQuantityText is not empty and is a valid integer at this point
+        val pillQuantity = pillQuantityText.toInt()
 
         // Retrieve selected days using the getSelectedDays() method
         val selectedDays = getSelectedDays()
 
+        // Create the medication object
         val medication = Medication(
             id = medicationId ?: "",
             name = name,
             startDate = startDate,
             instructions = instructions,
-            pillQuantity = pillQuantity ?: 0, // Ensure there's a fallback value
+            pillQuantity = pillQuantity,
             repeatDays = selectedDays,
             notes = notes
         )
 
         // Determine whether to add a new medication or update an existing one
         if (medicationId == null) {
-            addMedicationToFirestore(userId, medication)
+            addMedicationToFirestore(userId, medication, dialog)
         } else {
-            updateMedicationInFirestore(userId, medicationId ?: "", medication)
+            updateMedicationInFirestore(userId, medicationId ?: "", medication, dialog)
         }
-
-
     }
 
 
-
-
-    private fun addMedicationToFirestore(userId: String, medication: Medication) {
+    private fun addMedicationToFirestore(userId: String, medication: Medication, dialog: Dialog) {
         FirebaseFirestore.getInstance().collection("users").document(userId)
             .collection("medications").add(medication)
             .addOnSuccessListener {
-                if(isAdded) { // Check if the fragment is currently added to its activity
+                if (isAdded) { // Check if the fragment is currently added to its activity
                     Toast.makeText(context, "Medication added successfully.", Toast.LENGTH_SHORT).show()
-                    dismiss()
+                    dialog.dismiss() // Explicitly dismiss the dialog on success
                 }
             }
             .addOnFailureListener { e ->
-                if(isAdded) {
+                if (isAdded) {
                     Toast.makeText(context, "Failed to add medication: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    private fun updateMedicationInFirestore(userId: String, medicationId: String, medication: Medication) {
+
+    private fun updateMedicationInFirestore(userId: String, medicationId: String, medication: Medication, dialog: Dialog) {
         FirebaseFirestore.getInstance().collection("users").document(userId)
             .collection("medications").document(medicationId)
             .set(medication)
             .addOnSuccessListener {
                 updateListener?.onMedicationUpdated()
-                if(isAdded) {
+                if (isAdded) {
                     Toast.makeText(context, "Medication updated successfully.", Toast.LENGTH_SHORT).show()
-                    dismiss() // Close the dialog
+                    dialog.dismiss() // Explicitly dismiss the dialog on success
                 }
             }
             .addOnFailureListener { e ->
-                if(isAdded) {
+                if (isAdded) {
                     Toast.makeText(context, "Failed to update medication: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
+
 
 
 

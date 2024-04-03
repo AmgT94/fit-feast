@@ -26,5 +26,15 @@
             android:layout_height="wrap_content"
             android:text="Sample Description"
             android:textSize="14sp"/>
+
+        <!-- Add this TextView to display the water intake value if this card is the water intake goal -->
+        <TextView
+            android:id="@+id/waterIntakeValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/textColorPrimary"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -34,10 +34,10 @@ class MedicationFragment : Fragment(), AddMedicationDialogFragment.MedicationUpd
         }
 
         // Handle the manual refresh button
-        binding.refreshMedicationButton.setOnClickListener {
-            fetchMedications()
-            Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
-        }
+        //binding.refreshMedicationButton.setOnClickListener {
+           // fetchMedications()
+            //Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
+       // }
     }
 
     private fun showAddMedicationDialog() {
@@ -65,9 +65,14 @@ class MedicationFragment : Fragment(), AddMedicationDialogFragment.MedicationUpd
     private fun fetchMedications() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance().collection("users").document(userId)
-            .collection("medications").get()
-            .addOnSuccessListener { documents ->
-                val medications = documents.map { doc ->
+            .collection("medications")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.e("MedicationFragment", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                val medications = snapshots?.map { doc ->
                     Medication(
                         id = doc.id,
                         name = doc.getString("name") ?: "",
@@ -77,31 +82,12 @@ class MedicationFragment : Fragment(), AddMedicationDialogFragment.MedicationUpd
                         repeatDays = doc.get("repeatDays") as? List<String> ?: emptyList(),
                         notes = doc.getString("notes") ?: ""
                     )
-                }
+                } ?: emptyList()
+
                 medicationAdapter.updateMedications(medications)
             }
     }
 
-    private fun onEditMedication(medicationId: String) {
-        val editDialogFragment = AddMedicationDialogFragment.newInstance(medicationId)
-        editDialogFragment.show(parentFragmentManager, "editMedication")
-    }
-
-    private fun onDeleteMedication(medicationId: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance().collection("users").document(userId)
-            .collection("medications").document(medicationId)
-            .delete()
-            .addOnSuccessListener {
-                Log.d("DeleteMedication", "Medication successfully deleted")
-                Toast.makeText(context, "Medication deleted successfully", Toast.LENGTH_SHORT).show()
-                fetchMedications()  // Refresh the list
-            }
-            .addOnFailureListener { e ->
-                Log.e("DeleteMedication", "Error deleting medication", e)
-                Toast.makeText(context, "Error deleting medication: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

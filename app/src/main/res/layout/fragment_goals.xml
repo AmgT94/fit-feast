@@ -154,6 +154,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         app:srcCompat="@drawable/ic_edit"
+        android:backgroundTint="@color/secondaryColor"
         app:fabSize="normal" />
 
     <!-- Weight Loss floating action button -->
@@ -167,6 +168,7 @@
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_weight_loss"
         android:contentDescription="@string/weight_loss"
+        android:backgroundTint="@color/secondaryLightColor"
         app:fabSize="normal" />
 
     <!-- Weight Gain floating action button -->
@@ -180,6 +182,7 @@
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_weight_gain"
         android:contentDescription="@string/weight_gain"
+        android:backgroundTint="@color/secondaryLightColor"
         app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

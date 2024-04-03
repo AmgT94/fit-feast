@@ -29,7 +29,8 @@ data class Medication(
 
 data class Goal(
     val title: String,
-    val description: String
+    val description: String,
+    var waterIntake: Double? = null
 )
 
 data class NutritionData(

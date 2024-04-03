@@ -60,5 +60,10 @@
     <string name="weight_loss">Weight Loss</string>
     <string name="weight_gain">Weight Gain</string>
 
+    <string name="no_data_available">No data available</string>
+    <string name="keep_track_of_hydration">Keep track of your hydration.</string>
+    <string name="water_intake_goal">Water intake goal: %1$.2f liters</string>
+    <string name="water_intake_format">%1$.2f Liters</string>
+
 
 </resources>

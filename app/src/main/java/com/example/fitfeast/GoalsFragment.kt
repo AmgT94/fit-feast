@@ -17,7 +17,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListener {
+class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListener, GoalsAdapter.OnGoalClickListener, WaterIntakeDialogFragment.WaterIntakeDialogListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var goalsAdapter: GoalsAdapter
@@ -33,6 +33,9 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
 
     private var isFabMenuOpen = false
 
+    private var goalsList = mutableListOf<Goal>()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,7 +49,7 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
             Goal("Water Intake", "Keep track of your hydration."),
             Goal("Weight Management", "Monitor your weight gain or loss.")
         )
-        goalsAdapter = GoalsAdapter(goalsData)
+        goalsAdapter = GoalsAdapter(goalsData, this)
         recyclerView.adapter = goalsAdapter
 
         // Initialize FloatingActionButton
@@ -90,12 +93,43 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
             Toast.makeText(context, "Weight Gain Clicked", Toast.LENGTH_SHORT).show()
         }
         //method call to fetch and display nutrition data
-                fetchLatestNutritionData()
+        fetchLatestNutritionData()
     }
 
     override fun onResume() {
         super.onResume()
         fetchLatestNutritionData()
+    }
+
+    override fun onWaterIntakeClick() {
+        val dialog = WaterIntakeDialogFragment()
+        dialog.show(parentFragmentManager, "WaterIntakeDialogFragment")
+    }
+
+
+    override fun onGoalClick(goal: Goal) {
+        when (goal.title) {
+            "Water Intake" -> showWaterIntakeDialog()
+            "Weight Management" -> {
+                // Handle the click for "Weight Management"
+            }
+            else -> {
+            }
+        }
+    }
+
+
+
+    private fun setupRecyclerView() {
+        val goalsData = listOf(
+            Goal("Water Intake", "Keep track of your hydration."),
+            // Other goals...
+        )
+        goalsAdapter = GoalsAdapter(
+            goalsData,
+            this
+        ) // `this` refers to GoalsFragment implementing OnGoalClickListener
+        recyclerView.adapter = goalsAdapter
     }
 
     private fun fetchLatestNutritionData() {
@@ -139,22 +173,36 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
     }
 
 
-
-    override fun onUpdateNutrientInput(calories: Double, fatGrams: Double, carbsGrams: Double, proteinGrams: Double) {
+    override fun onUpdateNutrientInput(
+        calories: Double,
+        fatGrams: Double,
+        carbsGrams: Double,
+        proteinGrams: Double
+    ) {
         // Update UI with the received data
         updateNutritionUI(calories, fatGrams, carbsGrams, proteinGrams)
 
-        // Optionally, confirm with the user before saving the data
+        // Confirm with the user before saving the data
         confirmAndSaveNutritionData(calories, fatGrams, carbsGrams, proteinGrams)
     }
 
-    private fun confirmAndSaveNutritionData(calories: Double, fatGrams: Double, carbsGrams: Double, proteinGrams: Double) {
+    private fun confirmAndSaveNutritionData(
+        calories: Double,
+        fatGrams: Double,
+        carbsGrams: Double,
+        proteinGrams: Double
+    ) {
         // (update later) For simplicity, assuming the user always confirms, and directly save the data
         saveNutritionData(calories, fatGrams, carbsGrams, proteinGrams)
     }
 
 
-    private fun saveNutritionData(calories: Double, fatGrams: Double, carbsGrams: Double, proteinGrams: Double) {
+    private fun saveNutritionData(
+        calories: Double,
+        fatGrams: Double,
+        carbsGrams: Double,
+        proteinGrams: Double
+    ) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             val nutritionData = hashMapOf(
@@ -168,20 +216,135 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
             FirebaseFirestore.getInstance().collection("users").document(userId)
                 .collection("nutritionData").add(nutritionData)
                 .addOnSuccessListener {
-                    Toast.makeText(context, "Nutrition data updated successfully.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Nutrition data updated successfully.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(context, "Error updating nutrition data: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Error updating nutrition data: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         } else {
             Toast.makeText(context, "No user logged in.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun updateNutritionUI(calories: Double, fatGrams: Double, carbsGrams: Double, proteinGrams: Double) {
+    private fun updateNutritionUI(
+        calories: Double,
+        fatGrams: Double,
+        carbsGrams: Double,
+        proteinGrams: Double
+    ) {
         caloriesTextView?.text = getString(R.string.calories_text, calories)
         fatGramsTextView?.text = getString(R.string.fat_grams_text, fatGrams)
         carbsGramsTextView?.text = getString(R.string.carbs_grams_text, carbsGrams)
         proteinGramsTextView?.text = getString(R.string.protein_grams_text, proteinGrams)
     }
+
+
+    private fun saveWaterIntakeToFirestore(waterIntake: Double) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(context, "No user logged in", Toast.LENGTH_SHORT).show()
+            Log.d("GoalsFragment", "Attempted to save water intake with no user logged in.")
+            return
+        }
+
+        val waterIntakeData = hashMapOf(
+            "timestamp" to FieldValue.serverTimestamp(),
+            "waterIntake" to waterIntake
+        )
+
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("waterIntakeData").add(waterIntakeData)
+            .addOnSuccessListener {
+                Log.d("GoalsFragment", "Water intake saved successfully")
+                Toast.makeText(context, "Water intake saved successfully", Toast.LENGTH_SHORT)
+                    .show()
+                fetchLatestWaterIntake() // Fetch the latest data to update the UI
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoalsFragment", "Error saving water intake: ${e.message}", e)
+                Toast.makeText(
+                    context,
+                    "Error saving water intake: ${e.localizedMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+
+    private fun fetchLatestWaterIntake() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Log.d("GoalsFragment", "fetchLatestWaterIntake: No user logged in.")
+            Toast.makeText(context, "No user logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.d("GoalsFragment", "Fetching latest water intake for user ID: $userId")
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("waterIntakeData").orderBy("timestamp", Query.Direction.DESCENDING).limit(1)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Log.d("GoalsFragment", "No water intake data found for user.")
+                    handleNoDataScenario()
+                } else {
+                    val document = documents.documents.first()
+                    val waterIntake = document.getDouble("waterIntake")
+                    if (waterIntake != null) {
+                        Log.d("GoalsFragment", "Latest water intake: $waterIntake liters")
+                        updateWaterIntakeGoalCard(waterIntake)
+                    } else {
+                        Log.d("GoalsFragment", "Water intake data is null.")
+                        handleNoDataScenario()
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("GoalsFragment", "Error fetching water intake: ${e.message}", e)
+                Toast.makeText(context, "Error fetching water intake: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun handleNoDataScenario() {
+        // Update the water intake goal card to show "No data"
+        val noDataIndex = goalsList.indexOfFirst { it.title == "Water Intake" }
+        if (noDataIndex != -1) {
+            goalsList[noDataIndex].waterIntake = 0.0
+            goalsAdapter.notifyItemChanged(noDataIndex)
+        }
+    }
+
+    private fun updateWaterIntakeGoalCard(waterIntake: Double) {
+        val index = goalsList.indexOfFirst { it.title == "Water Intake" }
+        if (index != -1) {
+            Log.d("GoalsFragment", "Updating card at index: $index")
+            goalsList[index].waterIntake = waterIntake
+            goalsAdapter.notifyItemChanged(index)
+        }
+    }
+
+
+    private fun showWaterIntakeDialog() {
+        val dialog = WaterIntakeDialogFragment().apply {
+            listener = this@GoalsFragment // Set the fragment as the listener
+        }
+        dialog.show(parentFragmentManager, "WaterIntakeDialogFragment")
+    }
+
+
+    override fun onWaterIntakeEntered(waterIntake: Double) {
+        Log.d("GoalsFragment", "Water intake entered: $waterIntake")
+        saveWaterIntakeToFirestore(waterIntake)
+    }
 }
+
+
