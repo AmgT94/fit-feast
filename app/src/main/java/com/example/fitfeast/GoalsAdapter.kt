@@ -44,20 +44,21 @@ class GoalsAdapter(private val goalsList: List<Goal>, private val listener: OnGo
             Log.d("GoalViewHolder", "Binding view for: ${goal.title}")
 
             titleTextView.text = goal.title
-            if (goal.title == "Water Intake") {
-                goal.waterIntake?.let { waterIntake ->
-                    Log.d("GoalViewHolder", "Water Intake: $waterIntake")
-                    waterIntakeValueTextView.visibility = View.VISIBLE
-                    waterIntakeValueTextView.text = itemView.context.getString(R.string.water_intake_format, waterIntake)
-                    descriptionTextView.text = itemView.context.getString(R.string.water_intake_goal, waterIntake)
-                } ?: run {
-                    Log.d("GoalViewHolder", "No Water Intake Data")
-                    waterIntakeValueTextView.visibility = View.GONE
-                    descriptionTextView.text = itemView.context.getString(R.string.keep_track_of_hydration)
+            when (goal.title) {
+                "Water Intake" -> {
+                    goal.waterIntake?.let { waterIntake ->
+                        // Adjust the format specifier to handle the Double type
+                        descriptionTextView.text = itemView.context.getString(R.string.water_intake_goal, waterIntake)
+                        waterIntakeValueTextView.visibility = View.GONE
+                    } ?: run {
+                        descriptionTextView.text = itemView.context.getString(R.string.keep_track_of_hydration)
+                        waterIntakeValueTextView.visibility = View.GONE
+                    }
                 }
-            } else {
-                descriptionTextView.text = goal.description
-                waterIntakeValueTextView.visibility = View.GONE
+                else -> {
+                    descriptionTextView.text = goal.description
+                    waterIntakeValueTextView.visibility = View.GONE
+                }
             }
         }
 
