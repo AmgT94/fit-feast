@@ -67,7 +67,8 @@ class WaterIntakeManagementFragment : Fragment() {
                     binding.tvWaterIntakeGoal.text = getString(R.string.water_intake_goal, waterIntakeGoal)
                     binding.tvRemainingWater.text = getString(R.string.remaining_water_to_go, remainingWaterIntake)
 
-                    updateProgressBar()
+                    // Now passing the remainingWaterIntake to updateProgressBar
+                    updateProgressBar(remainingWaterIntake)
                 } else {
                     Toast.makeText(context, "No water intake data found", Toast.LENGTH_SHORT).show()
                 }
@@ -78,6 +79,7 @@ class WaterIntakeManagementFragment : Fragment() {
     }
 
 
+
     private fun setupIconClickListeners() {
         binding.imgWaterDrop180ml.setOnClickListener { subtractWaterIntake(180.0) }
         binding.imgWaterDrop350ml.setOnClickListener { subtractWaterIntake(350.0) }
@@ -86,29 +88,45 @@ class WaterIntakeManagementFragment : Fragment() {
     }
 
     private fun subtractWaterIntake(amount: Double) {
-        val amountInLiters = amount / 1000
-        remainingWaterIntake = max(0.0, remainingWaterIntake - amountInLiters)
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: let {
+            Toast.makeText(context, "No user logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        saveUpdatedWaterIntake()
-        updateUI()
+        val currentDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+        val documentReference = FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("waterIntakeData").document(currentDate)
+
+        FirebaseFirestore.getInstance().runTransaction { transaction ->
+            val snapshot = transaction.get(documentReference)
+            val currentRemaining = snapshot.getDouble("remainingWaterIntake") ?: 0.0
+            val newRemaining = max(0.0, currentRemaining - (amount / 1000))
+
+            transaction.update(documentReference, "remainingWaterIntake", newRemaining)
+
+            // Returning new remaining for UI update
+            newRemaining
+        }.addOnSuccessListener { newRemaining ->
+            updateUI(newRemaining)
+        }.addOnFailureListener { e ->
+            Toast.makeText(context, "Error updating water intake: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun updateProgressBar() {
-
+    private fun updateProgressBar(remainingWaterIntake: Double) {
         val consumedWater = waterIntakeGoal - remainingWaterIntake
         val progress = ((consumedWater / waterIntakeGoal) * 100).toInt()
         binding.waterLevelProgress.progress = progress
     }
 
-
-
-    private fun updateUI() {
+    private fun updateUI(remainingWaterIntake: Double) {
         binding.tvRemainingWater.text = getString(R.string.remaining_water_to_go, remainingWaterIntake)
         if (remainingWaterIntake <= 0) {
             Toast.makeText(context, "Congratulations! You've reached your water intake goal for today!", Toast.LENGTH_LONG).show()
         }
-        updateProgressBar()
+        updateProgressBar(remainingWaterIntake)
     }
+
 
     private fun saveUpdatedWaterIntake() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: let {

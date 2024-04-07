@@ -250,32 +250,32 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
             Toast.makeText(context, "No user logged in", Toast.LENGTH_SHORT).show()
-            Log.d("GoalsFragment", "Attempted to save water intake with no user logged in.")
             return
         }
 
-        val waterIntakeData = hashMapOf(
-            "timestamp" to FieldValue.serverTimestamp(),
-            "waterIntake" to waterIntake
-        )
+        val currentDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+        val documentReference = FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("waterIntakeData").document(currentDate)
 
-        FirebaseFirestore.getInstance().collection("users").document(userId)
-            .collection("waterIntakeData").add(waterIntakeData)
-            .addOnSuccessListener {
-                Log.d("GoalsFragment", "Water intake saved successfully")
-                Toast.makeText(context, "Water intake saved successfully", Toast.LENGTH_SHORT)
-                    .show()
-                fetchLatestWaterIntake()
+        documentReference.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                // Update existing document
+                documentReference.update("waterIntake", waterIntake, "remainingWaterIntake", waterIntake)
+            } else {
+                // Create a new document
+                val waterIntakeData = hashMapOf(
+                    "date" to currentDate,
+                    "waterIntake" to waterIntake,
+                    "remainingWaterIntake" to waterIntake,
+                    "timestamp" to FieldValue.serverTimestamp()
+                )
+                documentReference.set(waterIntakeData)
             }
-            .addOnFailureListener { e ->
-                Log.e("GoalsFragment", "Error saving water intake: ${e.message}", e)
-                Toast.makeText(
-                    context,
-                    "Error saving water intake: ${e.localizedMessage}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(context, "Error saving water intake: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
 
     private fun fetchLatestWaterIntake() {
