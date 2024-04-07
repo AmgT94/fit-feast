@@ -61,10 +61,22 @@
     <string name="weight_gain">Weight Gain</string>
 
     <string name="no_data_available">No data available</string>
-    <string name="water_intake_goal">Intake Goal: %1$.2f Liters</string>
     <string name="keep_track_of_hydration">Keep track of your hydration.</string>
     <string name="water_intake_format">%1$.2f Liters</string>
     <string name="goals">Goals</string>
+
+    <string name="water_180ml">180 ml</string>
+    <string name="water_350ml">350 ml</string>
+    <string name="water_500ml">500 ml</string>
+    <string name="water_1000ml">1000 ml</string>
+    <string name="water_intake_goal">Water Intake Goal: %1$.2f liters</string>
+    <string name="remaining_water_to_go">%1$.2f liters to go!</string>
+
+    <string name="water_drop_180ml">180ml</string>
+    <string name="water_drop_350ml">350ml</string>
+    <string name="water_drop_500ml">500ml</string>
+    <string name="water_drop_1000ml">1000ml</string>
+    <string name="water_intake_management">Water Intake Management</string>
 
 
 </resources>

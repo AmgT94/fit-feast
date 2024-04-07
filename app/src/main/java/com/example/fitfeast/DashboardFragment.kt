@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.fitfeast.databinding.FragmentDashboardBinding
 import kotlinx.coroutines.launch
 
@@ -16,18 +17,13 @@ class DashboardFragment : Fragment() {
 
     private lateinit var binding: FragmentDashboardBinding
 
-    interface DrawerController {
-        fun setDrawerLocked(locked: Boolean)
-    }
 
-    private var drawerController: DrawerController? = null
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is DrawerController) {
-            drawerController = context
-            drawerController?.setDrawerLocked(false)
-        }
+        // Directly unlock the drawer when fragment is attached
+        (context as? MainActivity)?.setDrawerLocked(false)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -39,7 +35,13 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.dashboard)
         fetchNews()
+
+        // Set OnClickListener for the Water Intake card
+        binding.waterIntakeCardView.setOnClickListener {
+            findNavController().navigate(R.id.action_dashboardFragment_to_waterIntakeManagementFragment)
+        }
     }
+
 
     private fun fetchNews() {
         lifecycleScope.launch {
@@ -73,7 +75,7 @@ class DashboardFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        drawerController?.setDrawerLocked(true)
-        drawerController = null
+        // Directly lock the drawer when fragment is detached
+        (activity as? MainActivity)?.setDrawerLocked(true)
     }
 }

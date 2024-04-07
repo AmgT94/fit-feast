@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
 
+    /*interface DrawerController {
+        fun setDrawerLocked(locked: Boolean)
+    }*/
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -90,6 +94,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun setDrawerLocked(locked: Boolean) {
+        val drawerLockMode = if (locked) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED
+        binding.drawerLayout.setDrawerLockMode(drawerLockMode)
+        drawerToggle.isDrawerIndicatorEnabled = !locked
     }
     private fun setupNavigationHeader() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid

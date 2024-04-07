@@ -3,4 +3,5 @@
         <item name="hintTextAppearance">@style/TextAppearance.MaterialComponents.Caption</item>
         <item name="errorTextAppearance">@style/TextAppearance.MaterialComponents.Caption</item>
     </style>
+
 </resources>

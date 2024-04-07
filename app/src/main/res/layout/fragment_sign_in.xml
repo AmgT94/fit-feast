@@ -38,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sign_in"
+            android:textColor="@color/textColorPrimary"
             android:importantForAccessibility="yes"
             android:contentDescription="@string/sign_in_button" />
 

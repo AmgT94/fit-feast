@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_dashboardFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_waterIntakeManagementFragment"
+            app:destination="@id/waterIntakeManagementFragment" />
     </fragment>
 
 
@@ -68,6 +71,13 @@
         android:name="com.example.fitfeast.GoalsFragment"
         android:label="Goals"
         tools:layout="@layout/fragment_goals" />
+
+    <!-- Water Intake Management Fragment -->
+    <fragment
+        android:id="@+id/waterIntakeManagementFragment"
+        android:name="com.example.fitfeast.WaterIntakeManagementFragment"
+        android:label="WaterIntakeManagementFragment"
+        tools:layout="@layout/fragment_water_intake_management" />
 
 
 </navigation>
