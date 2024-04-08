@@ -157,6 +157,5 @@ class WaterIntakeManagementFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        // Consider moving setDrawerLocked(true) here if it suits your app's logic better
     }
 }
