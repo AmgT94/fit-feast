@@ -86,6 +86,12 @@ class MainActivity : AppCompatActivity() {
                     supportActionBar?.show()
                     supportActionBar?.title = getString(R.string.goals)
                 }
+                R.id.weightManagementFragment -> {
+                    setDrawerEnabled(true)
+                    setTabsVisibility(false)
+                    supportActionBar?.show()
+                    supportActionBar?.title = getString(R.string.weight)
+                }
                 else -> {
                     setDrawerEnabled(false)
                     setTabsVisibility(false)
@@ -94,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
     fun setDrawerLocked(locked: Boolean) {
@@ -159,14 +166,13 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_dashboard -> navController.navigate(R.id.dashboardFragment)
                 R.id.nav_goals -> navController.navigate(R.id.goalsFragment)
-                R.id.nav_weight -> {
-                    // Handle navigation to WeightFragment
-                }
+                R.id.nav_weight -> navController.navigate(R.id.weightManagementFragment)
                 R.id.nav_medication -> navController.navigate(R.id.medicationFragment)
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
 
         // Find the header view and the edit button within it
         val headerView = binding.navView.getHeaderView(0)

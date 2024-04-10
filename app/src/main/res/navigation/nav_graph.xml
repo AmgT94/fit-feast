@@ -79,5 +79,29 @@
         android:label="WaterIntakeManagementFragment"
         tools:layout="@layout/fragment_water_intake_management" />
 
+    <!-- Weight Management Fragment -->
+    <fragment
+        android:id="@+id/weightManagementFragment"
+        android:name="com.example.fitfeast.WeightManagementFragment"
+        android:label="Weight Management"
+        tools:layout="@layout/fragment_weight_management">
+        <action
+            android:id="@+id/action_weightManagementFragment_to_fragmentAddWeight"
+            app:destination="@id/fragmentAddWeight" />
+    </fragment>
+
+    <!-- FragmentAddWeight -->
+    <fragment
+        android:id="@+id/fragmentAddWeight"
+        android:name="com.example.fitfeast.FragmentAddWeight"
+        android:label="Add New Weight"
+        tools:layout="@layout/fragment_add_weight">
+        <action
+            android:id="@+id/action_fragmentAddWeight_to_weightManagementFragment"
+            app:destination="@id/weightManagementFragment" />
+    </fragment>
+
+
+
 
 </navigation>

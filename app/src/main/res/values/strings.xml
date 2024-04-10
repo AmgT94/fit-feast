@@ -77,6 +77,17 @@
     <string name="water_drop_500ml">500ml</string>
     <string name="water_drop_1000ml">1000ml</string>
     <string name="water_intake_management">Water Intake Management</string>
+    <string name="calendar">Weight Calendar</string>
+    <string name="clock">Weight Clock</string>
+    <string name="save">Weight Save</string>
+    <string name="new_weight_hint">New Weight</string>
+    <string name="kg">kg</string>
+    <string name="previous_weight">Previous Weight</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="bmi">BMI</string>
+    <string name="body_fat_percentage">Body Fat %</string>
+    <string name="percentage_of_change">% of Change</string>
 
 
 </resources>

@@ -14,7 +14,8 @@ data class UserProfile(
     var heightUnit: String = "cm",
     var activityLevel: String = "",
     var medications: List<Medication> = emptyList(),
-    var profileImageUrl: String = ""
+    var profileImageUrl: String = "",
+    var previousWeight: Double = 0.0
 )
 
 data class Medication(
