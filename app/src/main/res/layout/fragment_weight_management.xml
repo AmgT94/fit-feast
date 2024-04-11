@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".WeightManagementFragment">
 
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <!-- CardView for Weight Metrics -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -76,22 +87,34 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewWeights"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/weight_item" />
+    <!-- History Header -->
+    <TextView
+        android:id="@+id/historyHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="History"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
 
+    <!-- RecyclerView for Weight History -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewWeightHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:listitem="@layout/item_weight_history" />
+
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- FAB to Add Weight -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
         android:backgroundTint="@color/secondaryColor"
-
         app:srcCompat="@drawable/ic_add_circle_outline" />
-
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -42,3 +42,34 @@ data class NutritionData(
     val proteinGrams: Double = 0.0,
     val timestamp: Timestamp = Timestamp.now()
 )
+
+data class WeightRecord(
+    val weight: Double,
+    val date: String,
+    val time: String,
+    val bmi: Double,
+    val bodyFatPercentage: Double,
+    val timestamp: Any
+) {
+    fun toMap(): Map<String, Any> {
+        return mapOf(
+            "weight" to weight,
+            "date" to date,
+            "time" to time,
+            "bmi" to bmi,
+            "bodyFatPercentage" to bodyFatPercentage,
+            "timestamp" to timestamp
+        )
+    }
+}
+
+data class WeightHistoryItem(
+    val date: String,
+    val time: String,
+    val bmi: Double,
+    val bodyFatPercentage: Double,
+    val weight: Double
+)
+
+
+

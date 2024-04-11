@@ -196,30 +196,33 @@ class FragmentAddWeight : Fragment() {
             return
         }
 
-        val userId = auth.currentUser?.uid ?: return
-        val weightRecord = hashMapOf(
-            "weight" to newWeight,
-            "timestamp" to FieldValue.serverTimestamp()
+        // Calculate BMI and Body Fat %
+        val bmi = calculateBMI(newWeight, userProfile.height)
+        val bodyFatPercentage = calculateBodyFat(bmi, userProfile.age, userProfile.gender)
+
+        // Create an instance of WeightRecord
+        val weightRecord = WeightRecord(
+            weight = newWeight,
+            date = binding.textViewDate.text.toString(),
+            time = binding.textViewTime.text.toString(),
+            bmi = bmi,
+            bodyFatPercentage = bodyFatPercentage,
+            timestamp = FieldValue.serverTimestamp()
         )
 
+        val userId = auth.currentUser?.uid ?: return
         firestore.collection("users").document(userId).collection("weights")
-            .add(weightRecord)
+            .add(weightRecord.toMap()) // You'll need to create a toMap method in your WeightRecord class
             .addOnSuccessListener {
-                // Update the displayed previous weight
-                val previousWeightText = if (userProfile.weight == 0.0) "N/A" else "${userProfile.weight} kg"
-                binding.textViewPreviousWeight.text = "Previous Weight: $previousWeightText"
-
-                // Now update the userProfile with the new current weight and calculate the metrics
-                userProfile.previousWeight = userProfile.weight
-                userProfile.weight = newWeight
-                calculateAndDisplayMetrics(newWeight)
-
                 Toast.makeText(context, "Weight saved successfully", Toast.LENGTH_SHORT).show()
+                // Additional logic after success...
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, "Failed to save weight: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+
 
 
 
