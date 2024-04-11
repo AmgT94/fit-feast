@@ -47,6 +47,12 @@
         <action
             android:id="@+id/action_dashboardFragment_to_waterIntakeManagementFragment"
             app:destination="@id/waterIntakeManagementFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_medicationFragment"
+            app:destination="@id/medicationFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_weightManagementFragment"
+            app:destination="@id/weightManagementFragment" />
     </fragment>
 
 
