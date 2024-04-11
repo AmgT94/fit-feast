@@ -131,9 +131,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
-
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- RecyclerView for listing other goals -->
@@ -144,45 +141,5 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/item_goal" />
 
-    <!-- Main floating action button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/mainFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        app:srcCompat="@drawable/ic_edit"
-        android:backgroundTint="@color/secondaryColor"
-        app:fabSize="normal" />
-
-    <!-- Weight Loss floating action button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/weightLossFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="72dp"
-        android:layout_marginBottom="100dp"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/ic_weight_loss"
-        android:contentDescription="@string/weight_loss"
-        android:backgroundTint="@color/secondaryLightColor"
-        app:fabSize="normal" />
-
-    <!-- Weight Gain floating action button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/weightGainFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="72dp"
-        android:layout_marginBottom="170dp"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/ic_weight_gain"
-        android:contentDescription="@string/weight_gain"
-        android:backgroundTint="@color/secondaryLightColor"
-        app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

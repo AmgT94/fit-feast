@@ -22,9 +22,7 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var goalsAdapter: GoalsAdapter
-    private lateinit var mainFab: FloatingActionButton
-    private lateinit var weightLossFab: FloatingActionButton
-    private lateinit var weightGainFab: FloatingActionButton
+
 
     // Text views for displaying nutrition data
     private lateinit var caloriesTextView: TextView
@@ -46,7 +44,6 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
         // Initialize the mutable list with the initial goals
         goalsList = mutableListOf(
             Goal("Water Intake", "Keep track of your hydration."),
-            Goal("Weight Management", "Monitor your weight gain or loss.")
         )
 
         // Initialize RecyclerView and Adapter for the goals
@@ -55,10 +52,8 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
         goalsAdapter = GoalsAdapter(goalsList, this)
         recyclerView.adapter = goalsAdapter
 
-        // Initialize FloatingActionButton and TextViews for the Macronutrient information
-        mainFab = view.findViewById(R.id.mainFab)
-        weightLossFab = view.findViewById(R.id.weightLossFab)
-        weightGainFab = view.findViewById(R.id.weightGainFab)
+        // Initialize  TextViews for the Macronutrient information
+
         caloriesTextView = view.findViewById(R.id.caloriesTextView)
         fatGramsTextView = view.findViewById(R.id.fatGramsTextView)
         carbsGramsTextView = view.findViewById(R.id.carbsGramsTextView)
@@ -77,17 +72,6 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Setup click listeners for the floating action buttons
-        mainFab.setOnClickListener {
-            toggleFabMenu()
-        }
-        weightLossFab.setOnClickListener {
-            Toast.makeText(context, "Weight Loss Clicked", Toast.LENGTH_SHORT).show()
-        }
-        weightGainFab.setOnClickListener {
-            Toast.makeText(context, "Weight Gain Clicked", Toast.LENGTH_SHORT).show()
-        }
 
         // Call method to fetch and display nutrition data
         fetchLatestNutritionData()
@@ -109,9 +93,7 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
     override fun onGoalClick(goal: Goal) {
         when (goal.title) {
             "Water Intake" -> showWaterIntakeDialog()
-            "Weight Management" -> {
-                // Handle the click for "Weight Management"
-            }
+
             else -> {
             }
         }
@@ -152,18 +134,6 @@ class GoalsFragment : Fragment(), NutrientInputDialogFragment.NutrientInputListe
             }
     }
 
-    private fun toggleFabMenu() {
-        if (!isFabMenuOpen) {
-            weightLossFab.show()
-            weightGainFab.show()
-            mainFab.setImageResource(R.drawable.ic_delete)
-        } else {
-            weightLossFab.hide()
-            weightGainFab.hide()
-            mainFab.setImageResource(R.drawable.ic_add_circle_outline)
-        }
-        isFabMenuOpen = !isFabMenuOpen
-    }
 
     private fun showNutrientInputDialog() {
         val dialog = NutrientInputDialogFragment()
