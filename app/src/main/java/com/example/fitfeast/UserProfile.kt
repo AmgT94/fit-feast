@@ -40,6 +40,7 @@ data class NutritionData(
     val fatGrams: Double = 0.0,
     val carbsGrams: Double = 0.0,
     val proteinGrams: Double = 0.0,
+    val remainingCalories: Double = 0.0,
     val timestamp: Timestamp = Timestamp.now()
 )
 

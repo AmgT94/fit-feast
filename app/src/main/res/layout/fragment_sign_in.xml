@@ -42,16 +42,6 @@
             android:importantForAccessibility="yes"
             android:contentDescription="@string/sign_in_button" />
 
-        <TextView
-            android:id="@+id/textViewForgotPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/forgot_password"
-            android:gravity="center"
-            android:textColor="?attr/colorPrimary"
-            android:paddingTop="16dp"
-            android:importantForAccessibility="yes"
-            android:contentDescription="@string/forgot_password_text" />
 
     </LinearLayout>
 </ScrollView>

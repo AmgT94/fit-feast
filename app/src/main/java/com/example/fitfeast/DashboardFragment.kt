@@ -43,12 +43,16 @@ class DashboardFragment : Fragment() {
         fetchLatestWeight()
         setupWeightCardClickListener()
         fetchWaterIntakeData()
+        fetchCalorieIntakeData()
         fetchNews()
 
         (activity as? AppCompatActivity)?.supportActionBar?.title = getString(R.string.dashboard)
 
         binding.cardViewWaterIntake.setOnClickListener {
             findNavController().navigate(R.id.action_dashboardFragment_to_waterIntakeManagementFragment)
+        }
+        binding.cardViewCaloriesIntake.setOnClickListener {
+            findNavController().navigate(R.id.action_dashboardFragment_to_caloriesManagementFragment)
         }
     }
 
@@ -171,6 +175,42 @@ class DashboardFragment : Fragment() {
     }
 
 
+    private fun fetchCalorieIntakeData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("nutritionData")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Log.d("DashboardFragment", "No calorie intake data found")
+                    // Handle the case where there is no data
+                } else {
+                    val latestRecord = documents.documents.first()
+                    val caloriesGoal = latestRecord.getDouble("calories") ?: 0.0
+                    val remainingCalories = latestRecord.getDouble("remainingCalories") ?: caloriesGoal
+                    val consumedCalories = caloriesGoal - remainingCalories
+                    updateCalorieIntakeUI(caloriesGoal, consumedCalories)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DashboardFragment", "Error fetching calorie intake data", e)
+            }
+    }
+
+    private fun updateCalorieIntakeUI(caloriesGoal: Double, consumedCalories: Double) {
+        val progress = if (caloriesGoal > 0) {
+            ((consumedCalories / caloriesGoal) * 100).toInt()
+        } else {
+            0
+        }
+        activity?.runOnUiThread {
+            binding.textViewCurrentCaloriesValue.text = String.format("%.2f", consumedCalories)
+            binding.textViewCaloriesGoal.text = String.format("%.2f", caloriesGoal)
+            binding.progressBarCaloriesIntake.progress = progress
+        }
+    }
 
 
     override fun onResume() {

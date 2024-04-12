@@ -225,24 +225,78 @@
 
         <!-- Calorie Intake Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewCaloriesIntake"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardElevation="4dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Calorie Intake"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/calorieIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_calories"
+                        android:layout_gravity="center_vertical"/>
+
+                    <TextView
+                        android:id="@+id/textViewCurrentCaloriesValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginStart="8dp"
+
+                        android:text="0" />
+
+                    <TextView
+                        android:id="@+id/textViewCurrentCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="kcal" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/textViewCaloriesGoal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:gravity="end"
+                        android:text="Goal" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progressBarCaloriesIntake"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:progressDrawable="@drawable/progress_bar_calories_intake"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="8dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

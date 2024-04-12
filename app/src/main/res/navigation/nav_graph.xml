@@ -53,6 +53,9 @@
         <action
             android:id="@+id/action_dashboardFragment_to_weightManagementFragment"
             app:destination="@id/weightManagementFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_caloriesManagementFragment"
+            app:destination="@id/caloriesManagementFragment" />
     </fragment>
 
 
@@ -107,7 +110,13 @@
             app:destination="@id/weightManagementFragment" />
     </fragment>
 
-
+    <!-- Calories Management Fragment -->
+    <fragment
+        android:id="@+id/caloriesManagementFragment"
+        android:name="com.example.fitfeast.CaloriesManagementFragment"
+        android:label="Calories Management"
+        tools:layout="@layout/fragment_calories_management">
+    </fragment>
 
 
 </navigation>

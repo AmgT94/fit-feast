@@ -89,5 +89,12 @@
     <string name="body_fat_percentage">Body Fat %</string>
     <string name="percentage_of_change">% of Change</string>
 
+    <string name="food_icon_180kcal">180kcal</string>
+    <string name="food_icon_350kcal">350kcal</string>
+    <string name="food_icon_500kcal">500kcal</string>
+    <string name="food_icon_1000kcal">1000kcal</string>
+    <string name="calories_intake_management">Calories Intake</string>
+    <string name="calories_intake_goal">Calories Intake Goal: %1$.2f kcal</string>
+    <string name="remaining_calories_to_go">%1$.2f kcal to go!</string>
 
 </resources>
